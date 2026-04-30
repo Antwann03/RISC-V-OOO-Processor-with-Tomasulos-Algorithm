@@ -12,7 +12,7 @@ This project demonstrates dynamic instruction scheduling, register renaming, and
 
 ## Project Structure
 
-### Core Components (20 VHDL files)
+### Core Components (18 VHDL files)
 
 | Component | Purpose |
 |-----------|---------|
@@ -30,7 +30,7 @@ Each component includes:
 - Entity + Architecture (`.vhd`)
 - Comprehensive testbench (`_TB.vhd`)
 
-### Warmup Components (4 VHDL files)
+### Warmup Components (6 VHDL files)
 - `D_FF.vhd` / `D_FF_tb.vhd` — Basic flip-flop
 - `FIFO.vhd` / `FIFO_tb.vhd` — Circular buffer
 - `Register_File.vhd` / `Register_File_tb.vhd` — 8-register warmup
