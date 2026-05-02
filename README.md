@@ -48,20 +48,90 @@ Each component includes:
 ---
 
 ## Architecture
+![RISC-V OOO Block Diagram with Tomasulo's Algorithm](TOP_BlockDiagram.png)
 
 ---
 
-## Results & Simulation
+##  Simulation Results
 
-Behavioral simulation verifies:
-- Correct instruction issuance and enqueueing
-- Out-of-order execution with proper dependency handling
-- Result broadcasting on CDB
-- In-order commitment via ROB
+All components verified through behavioral simulation in **Vivado 2023.2**. Five key simulations demonstrate processor functionality:
 
-[See waveforms directory for detailed simulation results]
+### Figure 1: RTL Block Diagram (Vivado Schematic)
+
+![TOP Block Diagram](TOP_BlockDiagram.png)
+
+*The complete processor RTL schematic showing all eight components and their interconnections.*
 
 ---
+
+### Figure 2: Register File 32 — Dual-Port Write and Read Operations
+
+![Register File 32 Simulation](RegisterFile32_Simulation.png)
+
+**What this demonstrates:**
+- Simultaneous writes to registers x1 and x2 (40-80ns)
+- Parallel read operations return correct values (100-120ns)
+- x0 register protection (hardwired to zero)
+
+**Why it matters:** Enables dual-operand instruction issuance with independent reads/writes.
+
+---
+
+### Figure 3: RAT — Register Renaming and Tag Tracking
+
+![RAT Simulation](RAT_Simulation.png)
+
+**What this demonstrates:**
+- Register x1 mapped to ROB entry 3 (tag 0011) at 40-60ns
+- Register x2 mapped to ROB entry 5 (tag 0101) at 60-80ns
+- Read operations return correct tags (80-100ns)
+
+**Why it matters:** Register renaming eliminates false data dependencies by mapping architectural registers to in-flight ROB entries.
+
+---
+
+### Figure 4: Reservation Stations — Dynamic Scheduling and CDB Snooping
+
+![Reservation Station Simulation](ReservationStation_Simulation.png)
+
+**What this demonstrates:**
+- Instruction with both operands ready executes immediately (40-60ns)
+- Instruction with missing operand waits (60-80ns)
+- CDB broadcasts complete the operand (80ns), instruction becomes ready (100ns)
+- Multiple instructions fill RS to capacity
+
+**Why it matters:** RS enables out-of-order execution by scheduling instructions based on operand readiness, not program order.
+
+---
+
+### Figure 5: ROB — In-Order Commitment and Full Detection
+
+![ROB Simulation](ROB_Simulation.png)
+
+**What this demonstrates:**
+- Three instructions enqueue to ROB entries (40-80ns)
+- CDB broadcasts mark each instruction done (80-140ns)
+- Instructions commit in program order (sequential commitEnable pulses)
+- ROB fills to capacity (8 entries), rejects 9th instruction
+
+**Why it matters:** ROB ensures architectural correctness by committing instructions in program order despite out-of-order execution.
+
+---
+
+### Figure 6: TOP-Level — Full Out-of-Order Pipeline Execution
+
+![TOP Integration Simulation](TOP_Simulation.png)
+
+**What this demonstrates:**
+- Three instructions (ADDI, LW, ADD) issue sequentially
+- ALU executes when operands ready (rsExecuteReady pulses)
+- CDB broadcasts results at different times (out-of-order execution)
+- ROB commits instructions sequentially (in-order commitment)
+
+**Key observation:** Notice that cdbValid pulses occur at different times (different instructions executing at different times), but commitEnable pulses occur sequentially. **This proves Tomasulo's Algorithm works: out-of-order execution with in-order commitment.**
+
+---
+
 
 ## Tools & Environment
 
