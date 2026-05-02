@@ -154,6 +154,4 @@ Integration tested via `TOP_tb.vhd` with multi-instruction programs.
 
 ## Documentation
 
-- **ProjectPaper_ece622sp26.docx** — IEEE-format research paper (2-4 pages)
-- **README.md** — This file
-- **Source files** — Comprehensive VHDL with inline comments
+- **ProjectPaper_ece622sp26.docx** — IEEE-format Report paper (2-4 pages)
